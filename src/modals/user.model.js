@@ -1,0 +1,57 @@
+import mongoose, { Types } from "mongoose";
+import bcrypt, { hash } from "bcrypt";
+
+const userSchema = mongoose.Schema({
+    globalRole: {
+        type:String,
+        enum: ['admin', 'member'],
+        required: true
+    },
+    userName: {
+        lowercase: true,
+        trim: true,
+        required: true,
+        unique: true
+    },
+    email: {
+        lowercase: true,
+        trim: true,
+        required: true,
+        unique: true,
+        match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address'],
+    },
+    password: {
+        type: String,
+        trim: true,
+        required: true,
+    },
+    isEmailVerified: {
+        type: Boolean,
+        default: false
+    },
+    isEmailVerifiedExpiry: {
+        type: Date
+    },
+    passwordResetTocken: {
+        type: String,
+    },
+    passwordResetTockenExpiry: {
+        type: Date
+    }
+})
+
+//the pre save hooks are written in the sechema above the declarition of the methods are done before model decleration
+userSchema.pre("save" , async function(){
+    if(!this.isModified("password")){
+        return;
+    }
+    else{
+        this.password = await hash(this.password);
+    }
+})
+
+
+
+
+export const User = mongoose.model("User", userSchema);
+

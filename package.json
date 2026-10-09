@@ -1,0 +1,29 @@
+{
+  "name": "bootcampmanagementapi",
+  "version": "1.0.0",
+  "description": "This the backend api used in an forntend to provide the response ",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "API",
+    "BACKEND",
+    "COURSES"
+  ],
+  "author": "Aditya Baroila Future Millioner",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "mongoose": "^9.11.1"
+  }
+}
