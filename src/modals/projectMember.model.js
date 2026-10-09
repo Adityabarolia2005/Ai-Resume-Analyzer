@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import projectModal from "./project.model.js" 
-// import User from "./project.model.js"
 
 const projectMemberSchema = mongoose.Schema({
     project:{

@@ -1,5 +1,5 @@
 import { app } from "./app.js"
-import { connectDB } from "./db/connectDb.js"\
+import { connectDB } from "./db/connectDb.js"
 import {apiError} from "./utility/apiError.js"
 import "dotenv/config"
 
