@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import "dotenv/config"
+import authRoutes from "./routes/auth.routes.js";
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.get('/healthCheck' , (req , res)=>{
         success: true
     })
 })
+
+app.use("/api/v1/auth", authRoutes);
 
 
 

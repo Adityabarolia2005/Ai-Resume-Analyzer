@@ -8,12 +8,14 @@ const userSchema = mongoose.Schema({
         required: true
     },
     userName: {
+        type: String,
         lowercase: true,
         trim: true,
         required: true,
         unique: true
     },
     email: {
+        type: String,
         lowercase: true,
         trim: true,
         required: true,
@@ -50,6 +52,9 @@ userSchema.pre("save" , async function(){
     }
 })
 
+userSchema.methods.isPasswordCorrect = async function(password){
+    return await bcrypt.compare( password,this.password );
+}   
 
 
 
