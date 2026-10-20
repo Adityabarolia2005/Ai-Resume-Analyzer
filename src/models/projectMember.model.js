@@ -1,26 +1,29 @@
 import mongoose from "mongoose";
-import projectModal from "./project.model.js" 
 
 const projectMemberSchema = mongoose.Schema({
-    project:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:projectModal
+    project: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Project",
+        required: true
     },
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:projectModal
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     },
-    role:{
-        type:String,
-        enum:["project_admin" , "member"]
+    role: {
+        type: String,
+        enum: ["project_admin", "member"],
+        default: "member"
     },
-    jointAt:{
-        type:Date
+    joinedAt: {
+        type: Date,
+        default: Date.now
     }
-},
-    {
-        timestamps:true
-    }
-);
+}, {
+    timestamps: true
+});
 
-export const projectMember = mongoose.model("projectMember" , projectMemberSchema);
+projectMemberSchema.index({ project: 1, userId: 1 }, { unique: true });
+
+export const ProjectMember = mongoose.model("ProjectMember", projectMemberSchema);

@@ -4,6 +4,7 @@ import { User } from "./user.model.js";
 const projectSchema = mongoose.Schema({
     name:{
         type:String,
+        unique:true,
         required:true,
     },
     description:{

@@ -31,7 +31,10 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    isEmailVerifiedExpiry: {
+    emailVerificationToken: {
+        type: String,
+    },
+    emailVerificationTokenExpiry: {
         type: Date
     },
     passwordResetTocken: {
@@ -48,7 +51,7 @@ userSchema.pre("save" , async function(){
         return;
     }
     else{
-        this.password = await bcrypt.hash(this.password);
+        this.password = await bcrypt.hash(this.password , 10);
     }
 })
 
