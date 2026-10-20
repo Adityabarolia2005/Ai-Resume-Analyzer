@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.routes.js";
 import projectRoutes from "./routes/project.routes.js";
 import cookieParser from "cookie-parser";
 import projectMemberRoute from "./routes/projectMember.routes.js"
+import { taskRoutes } from "./routes/tasks.route.js";
 
 const app = express();
 app.use(express.json());
@@ -24,7 +25,7 @@ app.get('/healthCheck' , (req , res)=>{
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/project" , projectRoutes);
 app.use("/api/v1/projectMember" , projectMemberRoute);
-app.use("api/v1/project",taskRoutes);
+app.use("/api/v1/project",taskRoutes);
 
 app.use((error, req, res, next) => {
   res.status(error.statusCode || 500).json({
