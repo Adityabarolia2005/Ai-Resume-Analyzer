@@ -37,3 +37,10 @@ taskRoutes.delete(
     authorizationMiddleware("owner" , "project_admin"),
     deleteTask
 )
+
+taskRoutes.patch(
+    "/:projectId/task/:taskId/assignTask",
+    authMiddleware,
+    authorizationMiddleware("owner" , "project_admin"),
+    assignTask
+)

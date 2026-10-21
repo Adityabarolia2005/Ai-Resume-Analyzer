@@ -144,3 +144,12 @@ export const deleteTask = async function (req, res, next) {
         next(error);
     }
 }
+
+export const assignTask = async function(req , res , next){
+    const { projectId, taskId } = req.params;
+    const userId = req.user.id;
+    if(!projectId || !taskId){
+        return next(new ApiError(400 , "Project and the task are undefined"));
+    }
+    
+}
