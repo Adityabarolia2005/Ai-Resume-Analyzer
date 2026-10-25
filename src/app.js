@@ -6,6 +6,7 @@ import projectRoutes from "./routes/project.routes.js";
 import cookieParser from "cookie-parser";
 import projectMemberRoute from "./routes/projectMember.routes.js"
 import { taskRoutes } from "./routes/tasks.route.js";
+import resumeRoutes from "./routes/resume.routes.js";
 
 const app = express();
 const allowedOrigins = new Set([
@@ -37,6 +38,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/project" , projectRoutes);
 app.use("/api/v1/projectMember" , projectMemberRoute);
 app.use("/api/v1/project",taskRoutes);
+app.use("/api/v1/resume", resumeRoutes);
 
 app.use((error, req, res, next) => {
   res.status(error.statusCode || 500).json({

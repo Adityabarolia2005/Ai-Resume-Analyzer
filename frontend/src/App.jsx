@@ -309,7 +309,9 @@ function StatusBadge({ status }) { const labels = { todo: "To do", in_progress: 
 function Stat({ label, value }) { return <div className="panel p-5"><p className="text-sm text-slate-500">{label}</p><p className="mt-2 text-3xl font-bold">{value}</p></div>; }
 function Empty({ text }) { return <p className="rounded-xl bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">{text}</p>; }
 
-export default function RootApp() {
+function LegacyRootApp() {
     if (window.location.pathname === "/forgot-password") return <ForgotPassword />;
     return <App />;
 }
+
+export { default } from "./ResumeAnalyzer.jsx";
