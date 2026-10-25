@@ -3,7 +3,8 @@ import {
     createProject,
     getProjects,
     getProjectById,
-    updateProject
+    updateProject,
+    deleteProject
 } from "../controllers/project.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
@@ -13,4 +14,5 @@ projectRoutes.get("/" , authMiddleware , getProjects)
 projectRoutes.post("/createProject" , authMiddleware ,  createProject);
 projectRoutes.get("/:projectId", authMiddleware, getProjectById);
 projectRoutes.patch("/:projectId" , authMiddleware , updateProject);
+projectRoutes.delete("/:projectId", authMiddleware, deleteProject);
 export default projectRoutes;

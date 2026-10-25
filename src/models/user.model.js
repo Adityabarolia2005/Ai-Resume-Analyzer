@@ -37,10 +37,10 @@ const userSchema = mongoose.Schema({
     emailVerificationTokenExpiry: {
         type: Date
     },
-    passwordResetTocken: {
+    passwordResetToken: {
         type: String,
     },
-    passwordResetTockenExpiry: {
+    passwordResetTokenExpiry: {
         type: Date
     }
 })

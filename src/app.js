@@ -8,10 +8,21 @@ import projectMemberRoute from "./routes/projectMember.routes.js"
 import { taskRoutes } from "./routes/tasks.route.js";
 
 const app = express();
+const allowedOrigins = new Set([
+    process.env.CORS_URL,
+    "http://localhost:5173",
+    "http://localhost:5174"
+].filter(Boolean));
+
 app.use(express.json());
 app.use(cors({
-    origin : process.env.CORS_URL,
-    credentials:true
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.has(origin)) {
+            return callback(null, origin || true);
+        }
+        return callback(new Error("Origin is not allowed by CORS"));
+    },
+    credentials: true
 }))
 app.use(cookieParser());
 

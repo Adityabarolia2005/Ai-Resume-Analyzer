@@ -5,7 +5,7 @@ import { addProjectMember, getProjectMembers, deleteMember ,updateMember} from "
 
 const projectMemberRoute = express.Router();
 
-projectMemberRoute.post("/:projectId/members", authMiddleware,authorizationMiddleware("owner", "project_admin", "member"), addProjectMember);
+projectMemberRoute.post("/:projectId/members", authMiddleware,authorizationMiddleware("owner"), addProjectMember);
 projectMemberRoute.get("/:projectId/members", authMiddleware,authorizationMiddleware("owner", "project_admin", "member"), getProjectMembers);
 projectMemberRoute.delete("/:projectId/member/:userId",authMiddleware,authorizationMiddleware("owner" , "project_admin"),deleteMember);
 projectMemberRoute.patch("/:projectId/members/:memberId",authMiddleware,authorizationMiddleware("owner"),updateMember

@@ -1,7 +1,7 @@
 import { ApiError } from "../utility/apiError.js";
 import { Task } from "../models/task.model.js";
 import { ApiResponse } from "../utility/response.js";
-
+import { ProjectMember } from "../models/projectMember.model.js";
 
 export const addTask = async function (req, res, next) {
     const { projectId } = req.params;
@@ -45,13 +45,37 @@ export const getTasksInsideProject = async function (req, res, next) {
     try {
         const taskList = await Task.find({
             project: projectId
-        }).sort({ createdAt: -1 });
+        })
+            .populate("assignedTo", "userName email")
+            .sort({ createdAt: -1 });
 
         return res.status(200).json(
             new ApiResponse(
                 200,
                 "Tasks fetched successfully",
                 taskList
+            )
+        );
+    } catch (error) {
+        return next(error);
+    }
+};
+
+export const getTasksAssignedToUser = async function (req, res, next) {
+    try {
+        const assignedTasks = await Task.find({
+            assignedTo: req.user.id
+        })
+            .populate("project", "name description")
+            .populate("createdBy", "userName email")
+            .populate("assignedTo", "userName email")
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                "Assigned tasks fetched successfully",
+                assignedTasks
             )
         );
     } catch (error) {
@@ -145,11 +169,104 @@ export const deleteTask = async function (req, res, next) {
     }
 }
 
-export const assignTask = async function(req , res , next){
+export const assignTask = async function (req, res, next) {
+    const { projectId, taskId } = req.params;
+    const { userId } = req.body;
+
+    if (!projectId || !taskId || !userId) {
+        return next(new ApiError(400, "Project ID, task ID, and user ID are required"));
+    }
+
+    try {
+        const targetIsOwner = req.project.createdBy.toString() === userId;
+
+        if (!targetIsOwner) {
+            const projectMember = await ProjectMember.findOne({
+                project: projectId,
+                userId
+            });
+
+            if (!projectMember) {
+                return next(new ApiError(404, "User is not a member of this project"));
+            }
+        }
+
+        const assignedTask = await Task.findOneAndUpdate(
+            {
+                _id: taskId,
+                project: projectId
+            },
+            {
+                $set: { assignedTo: userId }
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        ).populate("assignedTo", "userName email");
+
+        if (!assignedTask) {
+            return next(new ApiError(404, "Task not found in this project"));
+        }
+
+        return res.status(200).json(
+            new ApiResponse(200, "Task assigned successfully", assignedTask)
+        );
+    } catch (error) {
+        return next(error);
+    }
+};
+
+export const changeTaskStatus = async function (req, res, next) {
     const { projectId, taskId } = req.params;
     const userId = req.user.id;
-    if(!projectId || !taskId){
-        return next(new ApiError(400 , "Project and the task are undefined"));
+    const { newStatus } = req.body;
+
+    if (!newStatus || !["todo", "in_progress", "done"].includes(newStatus)) {
+        return next(new ApiError(400, "A valid task status is required"));
     }
-    
+
+    try {
+        const task = await Task.findOne({
+            _id: taskId,
+            project: projectId
+        })
+        if (!task) {
+            return next(new ApiError(404, "Task not found in this project"));
+        }
+
+        const isManager = req.roles === "owner" || req.projectRole === "project_admin";
+        const isAssignee = task.assignedTo && task.assignedTo.toString() === userId;
+
+        if (!isManager && !isAssignee) {
+            return next(new ApiError(403, "The user are not allow to change the status of the task"));
+        }
+        const updatedStatus = await Task.findOneAndUpdate({
+            _id: taskId,
+            project: projectId
+        },
+            {
+                $set: {
+                    status: newStatus
+                }
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+            .populate("project", ["name description"])
+            .populate("createdBy", ["userName email"])
+            .populate("assignedTo", ["userName email"]);
+
+        if (!updatedStatus) {
+            return next(new ApiError(400, "Task cann't be found to update the status"))
+        }
+
+        return res.status(200).json(
+            new ApiResponse(200, "The task status has been updated", updatedStatus)
+        );
+    } catch (error) {
+        return next(error);
+    }
 }

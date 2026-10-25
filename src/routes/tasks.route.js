@@ -1,5 +1,5 @@
 import express from "express"
-import {addTask , getTasksInsideProject , getTasksById , updateTask, deleteTask} from "../controllers/task.controller.js"
+import { addTask, getTasksInsideProject, getTasksAssignedToUser, getTasksById, updateTask, deleteTask, assignTask , changeTaskStatus} from "../controllers/task.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { authorizationMiddleware } from "../middlewares/authorization.middleware.js";
 export const taskRoutes = express.Router();
@@ -15,6 +15,12 @@ taskRoutes.get(
     authMiddleware,
     authorizationMiddleware("owner" , "project_admin"),
     getTasksInsideProject
+)
+
+taskRoutes.get(
+    "/tasks/assigned",
+    authMiddleware,
+    getTasksAssignedToUser
 )
 
 taskRoutes.get(
@@ -39,8 +45,15 @@ taskRoutes.delete(
 )
 
 taskRoutes.patch(
-    "/:projectId/task/:taskId/assignTask",
+    "/:projectId/tasks/:taskId/assign",
     authMiddleware,
     authorizationMiddleware("owner" , "project_admin"),
     assignTask
+)
+
+taskRoutes.patch(
+    "/:projectId/task/:taskId/status",
+    authMiddleware,
+    authorizationMiddleware("owner","project_admin","member"),
+    changeTaskStatus
 )

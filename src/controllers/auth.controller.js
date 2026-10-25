@@ -4,6 +4,7 @@ import {ApiResponse} from "../utility/response.js";
 import jwt from "jsonwebtoken"
 import crypto from "node:crypto";
 import { sendVerificationEmail } from "../services/email.service.js";
+import { requestPasswordReset, resetPassword } from "../services/forgetPassword.js";
 import "dotenv/config"
 
 export const registerUser = async function (req, res, next) {
@@ -165,5 +166,43 @@ export const logOutUser = function(req , res , next){
   } catch (error) {
     return next(error);
   }
+};
+
+export const forgotPassword = async function (req, res, next) {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return next(new ApiError(400, "Email is required"));
+        }
+
+        await requestPasswordReset(email.toLowerCase().trim());
+
+        return res.status(200).json(
+            new ApiResponse(200, "If an account exists, a password reset email has been sent")
+        );
+    } catch (error) {
+        return next(error);
+    }
+};
+
+export const resetUserPassword = async function (req, res, next) {
+    try {
+        const { token, newPassword } = req.body;
+
+        if (!token || !newPassword) {
+            return next(new ApiError(400, "Reset token and new password are required"));
+        }
+        if (newPassword.length < 8) {
+            return next(new ApiError(400, "Password must be at least 8 characters"));
+        }
+
+        await resetPassword(token, newPassword);
+
+        return res.status(200).json(
+            new ApiResponse(200, "Password reset successfully")
+        );
+    } catch (error) {
+        return next(error);
+    }
 };
     

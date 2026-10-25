@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import { Project } from "./project.model.js";
-import { User } from "./user.model.js";
 
 const taskSchema = mongoose.Schema({
     project:{
@@ -23,10 +21,10 @@ const taskSchema = mongoose.Schema({
       ref: "User",
       required: true,
     },
-    assignTo:{
+    assignedTo:{
       type: mongoose.Schema.Types.ObjectId,
       ref : "User",
-      required: true
+      default: null
     },
     status: {
       type: String,

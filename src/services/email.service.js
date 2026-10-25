@@ -26,3 +26,16 @@ export async function sendVerificationEmail({ email, verificationUrl }) {
     })
     
 }
+
+export async function sendPasswordResetEmail({ email, resetUrl }) {
+    await transporter.sendMail({
+        from: process.env.MAIL_FROM,
+        to: email,
+        subject: "Reset your password",
+        html: `
+      <h2>Reset your password</h2>
+      <p>Use the link below to choose a new password. This link expires in 15 minutes.</p>
+      <a href="${resetUrl}">Reset password</a>
+    `
+    });
+}

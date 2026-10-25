@@ -1,6 +1,7 @@
 import { Project } from "../models/project.model.js";
 import { User } from "../models/user.model.js";
 import { ProjectMember } from "../models/projectMember.model.js";
+import { Task } from "../models/task.model.js";
 import { ApiError } from "../utility/apiError.js";
 import { ApiResponse } from "../utility/response.js";
 
@@ -107,6 +108,33 @@ export const updateProject = async function (req, res, next) {
                 "Project details updated successfully",
                 updatedProject
             )
+        );
+    } catch (error) {
+        return next(error);
+    }
+};
+
+export const deleteProject = async function (req, res, next) {
+    const { projectId } = req.params;
+
+    try {
+        const project = await Project.findOne({
+            _id: projectId,
+            createdBy: req.user.id
+        });
+
+        if (!project) {
+            return next(new ApiError(404, "Project not found or you are not the owner"));
+        }
+
+        await Promise.all([
+            ProjectMember.deleteMany({ project: projectId }),
+            Task.deleteMany({ project: projectId }),
+            Project.deleteOne({ _id: projectId })
+        ]);
+
+        return res.status(200).json(
+            new ApiResponse(200, "Project and its tasks and members deleted successfully")
         );
     } catch (error) {
         return next(error);
